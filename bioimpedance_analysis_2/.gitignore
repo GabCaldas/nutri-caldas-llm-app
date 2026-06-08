@@ -1,0 +1,19 @@
+# Python virtual environments
+.venv/
+venv/
+env/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE and session configs
+.env
+.ipynb_checkpoints/
+.streamlit/
+*.pdf
+
+# Operating system files
+.DS_Store
+Thumbs.db
