@@ -2,9 +2,28 @@ import os
 import re
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_openai import ChatOpenAI
 
 # Load environment variables
 load_dotenv(dotenv_path="/home/caldas/Projects/agentic-ai-crash-course-codebasics/tutorial-agentic-ai/.env")
+
+def get_llm(model_name, temperature):
+    """Factory function to get the appropriate LLM chat client."""
+    if model_name.startswith("gemini-"):
+        return ChatGoogleGenerativeAI(model=model_name, temperature=temperature)
+    else:
+        # OpenRouter compatible models
+        api_key = os.getenv("OPENROUTER_API_KEY") or os.getenv("OPENAI_API_KEY")
+        return ChatOpenAI(
+            api_key=api_key,
+            base_url="https://openrouter.ai/api/v1",
+            model=model_name,
+            temperature=temperature,
+            default_headers={
+                "HTTP-Referer": "https://github.com/GabCaldas/nutri-caldas-llm-app",
+                "X-Title": "Nutri Caldas"
+            }
+        )
 
 def get_imc_classification(imc):
     """Classifies the Body Mass Index (IMC) according to WHO guidelines."""
@@ -74,7 +93,7 @@ Observações: Relatório gerado via formulário manual interativo Nutri Caldas.
 
 def run_stage1_analysis(report_text, model_name, temperature, age, sex):
     """Runs the first stage of the LLM pipeline, analyzing and classifying composition metrics."""
-    llm = ChatGoogleGenerativeAI(model=model_name, temperature=temperature)
+    llm = get_llm(model_name, temperature)
     
     extraction_prompt = f"""# PERSONA E CONTEXTO
 Você é um Agente Especialista em Antropometria e Composição Corporal de Alta Precisão. Sua função é receber relatórios estruturados de avaliação física (contendo peso, altura, dobras cutâneas e circunferências), extrair as métricas cruciais, cruzá-las com os dados demográficos e de perfil do usuário (Idade e Sexo Biológico) e gerar uma análise classificatória rigorosa e acurada.
@@ -134,7 +153,7 @@ segue as informacoes do usuario: {report_text}
 
 def run_stage2_diet(extraction_values, personal_data, model_name, temperature):
     """Runs the second stage of the LLM pipeline, calculating macro targets and creating daily meal plans."""
-    llm = ChatGoogleGenerativeAI(model=model_name, temperature=temperature)
+    llm = get_llm(model_name, temperature)
     
     diet_prompt = f"""# PERSONA E CONTEXTO
 Você é um Nutricionista Clínico e Esportivo de Elite, focado em nutrição baseada em evidências e otimização de performance/composição corporal. Você não apenas lê números, mas interpreta o cenário metabólico do paciente. Sua postura é empática, motivadora, mas extremamente técnica e direta ao ponto, sem o uso de floreios, rodeios ou emojis.

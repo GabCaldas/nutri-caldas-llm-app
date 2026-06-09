@@ -914,9 +914,9 @@ with st.sidebar:
 
     model_choice = st.selectbox(
         "Selecione o Modelo LLM:",
-        ["gemini-2.5-flash", "gemma-4-31b-it"],
+        ["gemini-2.5-flash", "nvidia/nemotron-3-ultra-550b-a55b:free", "nvidia/nemotron-3-ultra-550b-a55b"],
         index=0,
-        help="gemini-2.5-flash é o modelo recomendado e verificado para esta aplicação."
+        help="gemini-2.5-flash e nvidia/nemotron-3-ultra-550b-a55b sao os modelos recomendados para esta aplicacao."
     )
 
     temp_choice = st.slider(
