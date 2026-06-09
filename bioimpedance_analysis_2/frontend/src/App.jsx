@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import FormStep from './components/FormStep';
 import ResultDashboard from './components/ResultDashboard';
+import AnalysisLoadingScreen from './components/AnalysisLoadingScreen';
 import { Heart, Sun, Moon } from 'lucide-react';
 
 export default function App() {
@@ -193,7 +194,11 @@ export default function App() {
 
       {/* Main Content Area */}
       <main>
-        {activeStep === 'FORM' ? (
+        {isAnalyzing ? (
+          <div className="animate-fade-in">
+            <AnalysisLoadingScreen modelChoice={modelChoice} theme={theme} />
+          </div>
+        ) : activeStep === 'FORM' ? (
           <div className="animate-fade-in">
             <div className="max-w-7xl mx-auto px-4 pt-8 text-center md:text-left">
               <h1 className={`text-2xl font-black tracking-tight flex items-center justify-center md:justify-start gap-2 ${isDark ? 'text-white' : 'text-slate-800'}`}>
