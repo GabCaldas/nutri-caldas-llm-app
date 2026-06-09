@@ -16,59 +16,59 @@ export default function App() {
   const [rawReport, setRawReport] = useState('');
   const [theme, setTheme] = useState('light');
 
-  // Initial Form State matching design examples
+  // Initial Form State (Empty for user input)
   const [formData, setFormData] = useState({
-    patient_name: "Juliana Lima",
+    patient_name: "",
     personal_data: {
-      idade: 29,
+      idade: "",
       sexo: "Feminino",
-      goal: "Emagrecimento / Queima de Gordura",
+      goal: "Recomposição Corporal",
       activity: "Moderadamente ativo (exercício 3-5 dias/semana)",
       prazo: "3 meses",
       frequencia: "3-4 vezes por semana",
-      tipo_atividade: "Musculação e caminhada",
-      restricoes: true
+      tipo_atividade: "",
+      restricoes: false
     },
     antro_data: {
-      peso: 68.5,
-      altura: 168.0,
-      bf: 24.6
+      peso: "",
+      altura: "",
+      bf: ""
     },
     dobras_data: {
-      triciptal: 19.0,
-      subescapular: 25.0,
-      axilar_media: 19.0,
-      abdominal: 37.0,
-      coxa: 25.0,
-      supra_iliaca: 37.0,
-      peitoral: 10.0,
-      bicipital: 0.0,
-      panturrilha: 0.0
+      triciptal: "",
+      subescapular: "",
+      axilar_media: "",
+      abdominal: "",
+      coxa: "",
+      supra_iliaca: "",
+      peitoral: "",
+      bicipital: "",
+      panturrilha: ""
     },
     perimetros_data: {
-      torax: 90.0,
-      cintura: 72.0,
-      abdomen: 80.0,
-      quadril: 98.0,
-      braco_dir_cont: 28.0,
-      braco_esq_cont: 28.0,
-      braco_dir_rel: 27.5,
-      braco_esq_rel: 27.5,
-      antibraco_dir: 22.0,
-      antibraco_esq: 22.0,
-      coxa_dir: 56.0,
-      coxa_esq: 56.0,
-      panturrilha_dir: 36.0,
-      panturrilha_esq: 36.0,
-      escapular: 0.0
+      torax: "",
+      cintura: "",
+      abdomen: "",
+      quadril: "",
+      braco_dir_cont: "",
+      braco_esq_cont: "",
+      braco_dir_rel: "",
+      braco_esq_rel: "",
+      antibraco_dir: "",
+      antibraco_esq: "",
+      coxa_dir: "",
+      coxa_esq: "",
+      panturrilha_dir: "",
+      panturrilha_esq: "",
+      escapular: ""
     },
     bio_data: {
-      massa_magra: 51.8,
-      massa_muscular: 32.6,
-      gordura_visceral: 7,
-      hidratacao: 52.3,
-      tmb: 1482,
-      idade_metabolica: 24,
+      massa_magra: "",
+      massa_muscular: "",
+      gordura_visceral: "",
+      hidratacao: "",
+      tmb: "",
+      idade_metabolica: "",
       qualidade_dados: "Boa"
     },
     observations: ""

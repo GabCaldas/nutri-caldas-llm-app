@@ -14,11 +14,26 @@ export default function AnalysisLoadingScreen({ modelChoice, theme = 'light' }) 
   ];
 
   useEffect(() => {
-    // Update the visual stage every 2 seconds to simulate progression
-    const interval = setInterval(() => {
-      setStage((prev) => (prev < stages.length - 1 ? prev + 1 : prev));
-    }, 2000);
-    return () => clearInterval(interval);
+    let active = true;
+    // Delays in ms before transitioning OUT of each stage (0 -> 1, 1 -> 2, etc.)
+    // These reflect realistic backend times (reading is fast, AI processing and diet structure take longer)
+    const delays = [1500, 6000, 4500, 6000, 3000];
+
+    const runProgress = (currentStage) => {
+      if (!active || currentStage >= delays.length) return;
+      
+      setTimeout(() => {
+        if (!active) return;
+        setStage(currentStage + 1);
+        runProgress(currentStage + 1);
+      }, delays[currentStage]);
+    };
+
+    runProgress(0);
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   return (
