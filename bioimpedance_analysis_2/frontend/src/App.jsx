@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import FormStep from './components/FormStep';
 import ResultDashboard from './components/ResultDashboard';
-import { Bell, Heart, ChevronDown } from 'lucide-react';
+import { Heart } from 'lucide-react';
 
 export default function App() {
   const [activeStep, setActiveStep] = useState('FORM'); // 'FORM' or 'RESULTS'
@@ -159,32 +159,13 @@ export default function App() {
             </span>
           </div>
 
-          {/* Desktop Nav Items */}
-          <nav className="hidden md:flex items-center gap-6 text-xs font-semibold">
-            <span className={`hover:text-emerald-500 cursor-pointer ${isDarkTheme ? 'text-slate-400' : 'text-slate-500'}`}>Painel</span>
-            <span className="text-emerald-500 border-b-2 border-emerald-500 pb-1 cursor-pointer">Análises</span>
-            <span className={`hover:text-emerald-500 cursor-pointer ${isDarkTheme ? 'text-slate-400' : 'text-slate-500'}`}>Histórico</span>
-            <span className={`hover:text-emerald-500 cursor-pointer ${isDarkTheme ? 'text-slate-400' : 'text-slate-500'}`}>Planos</span>
-            <span className={`hover:text-emerald-500 cursor-pointer flex items-center gap-0.5 ${isDarkTheme ? 'text-slate-400' : 'text-slate-500'}`}>
-              Recursos <ChevronDown size={12} />
+          {/* Simple App Indicator */}
+          <div className="flex items-center gap-2">
+            <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md ${
+              isDarkTheme ? 'bg-slate-800 text-slate-300 border border-slate-700' : 'bg-slate-100 text-slate-600 border border-slate-200'
+            }`}>
+              {activeStep === 'FORM' ? 'Ficha de Avaliação' : 'Relatório IA'}
             </span>
-          </nav>
-
-          {/* Profile Actions */}
-          <div className="flex items-center gap-4">
-            <button className={`p-1.5 rounded-lg border ${isDarkTheme ? 'border-slate-800 text-slate-400 hover:text-white' : 'border-slate-100 text-slate-500 hover:text-slate-800'}`}>
-              <Bell size={16} />
-            </button>
-            <div className="flex items-center gap-2">
-              <img
-                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=100&h=100"
-                alt="Profile"
-                className="w-7 h-7 rounded-full border border-emerald-500 object-cover"
-              />
-              <span className={`text-xs font-bold hidden sm:inline ${isDarkTheme ? 'text-slate-300' : 'text-slate-700'}`}>
-                {formData.patient_name}
-              </span>
-            </div>
           </div>
 
         </div>

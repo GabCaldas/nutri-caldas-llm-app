@@ -156,6 +156,38 @@ function parseInlineMarkdown(text) {
 export default function ResultDashboard({ analysisData, formData, onBack, onDownloadPDF, isDownloadingPDF }) {
   const { parsed_metrics, stage1_result, stage2_result, formatted_report } = analysisData;
 
+  const [shareText, setShareText] = React.useState('Compartilhar');
+
+  const handleShare = async () => {
+    const shareTextContent = `🍏 *Caldas Nutri - Relatório IA de ${formData.patient_name}*\n` +
+      `- Composição Corporal: ${parsed_metrics.bf_class || 'Saudável'} (BF: ${(parseFloat(formData.antro_data.bf) || 0).toFixed(1)}%)\n` +
+      `- Gasto Calórico Diário: ${parsed_metrics.calories || '2000 kcal'}\n` +
+      `- Objetivo Principal: ${formData.personal_data.goal}\n` +
+      `Gerado automaticamente via Caldas Nutri.`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `Relatório Nutricional - ${formData.patient_name}`,
+          text: shareTextContent,
+          url: window.location.origin
+        });
+        return;
+      } catch (err) {
+        // ignore cancellation
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(shareTextContent + `\n\nLink: ${window.location.origin}`);
+      setShareText('Copiado!');
+      setTimeout(() => setShareText('Compartilhar'), 2500);
+    } catch (err) {
+      setShareText('Erro ao copiar');
+      setTimeout(() => setShareText('Compartilhar'), 2500);
+    }
+  };
+
   // Formatting variables
   const patientName = formData.patient_name;
   const currentDate = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
@@ -564,9 +596,12 @@ export default function ResultDashboard({ analysisData, formData, onBack, onDown
                 )}
               </button>
 
-              <button className="flex items-center justify-center gap-2 w-full py-3 border border-slate-800 hover:border-slate-700 font-bold text-xs text-slate-300 hover:bg-slate-900/40 rounded-xl transition-all">
+              <button
+                onClick={handleShare}
+                className="flex items-center justify-center gap-2 w-full py-3 border border-slate-800 hover:border-slate-700 font-bold text-xs text-slate-300 hover:bg-slate-900/40 rounded-xl transition-all active:scale-98"
+              >
                 <Share2 size={14} />
-                <span>Compartilhar</span>
+                <span>{shareText}</span>
               </button>
 
               <button
