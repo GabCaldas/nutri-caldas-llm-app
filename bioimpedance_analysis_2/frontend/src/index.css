@@ -5,3 +5,168 @@
     @apply antialiased text-slate-800 bg-slate-50;
   }
 }
+
+/* Dark Theme Overrides for FormStep manual mode when theme === 'dark' */
+.dark-theme-override .bg-white {
+  background-color: #0F1524 !important;
+  color: #F8FAFC !important;
+}
+.dark-theme-override .border-slate-100,
+.dark-theme-override .border-slate-50,
+.dark-theme-override .border-slate-200 {
+  border-color: #1E293B !important;
+}
+.dark-theme-override .text-slate-800 {
+  color: #F8FAFC !important;
+}
+.dark-theme-override .text-slate-600,
+.dark-theme-override .text-slate-700 {
+  color: #94A3B8 !important;
+}
+.dark-theme-override input,
+.dark-theme-override select,
+.dark-theme-override textarea {
+  background-color: #0F172A !important;
+  border-color: #1E293B !important;
+  color: #F1F5F9 !important;
+}
+.dark-theme-override select {
+  background-color: #0F172A !important;
+}
+.dark-theme-override .bg-slate-50 {
+  background-color: #090D16 !important;
+}
+.dark-theme-override .bg-emerald-50 {
+  background-color: rgba(16, 185, 129, 0.1) !important;
+}
+.dark-theme-override .text-emerald-600 {
+  color: #34D399 !important;
+}
+.dark-theme-override .bg-indigo-50 {
+  background-color: rgba(99, 102, 241, 0.1) !important;
+}
+.dark-theme-override .text-indigo-600 {
+  color: #818CF8 !important;
+}
+.dark-theme-override .bg-purple-50 {
+  background-color: rgba(168, 85, 247, 0.1) !important;
+}
+.dark-theme-override .text-purple-600 {
+  color: #C084FC !important;
+}
+.dark-theme-override .bg-amber-50 {
+  background-color: rgba(245, 158, 11, 0.1) !important;
+}
+.dark-theme-override .text-amber-600 {
+  color: #FBBF24 !important;
+}
+.dark-theme-override .bg-slate-200 {
+  background-color: #1E293B !important;
+  color: #94A3B8 !important;
+}
+.dark-theme-override .text-slate-400 {
+  color: #64748B !important;
+}
+.dark-theme-override .bg-emerald-50\/50 {
+  background-color: rgba(16, 185, 129, 0.05) !important;
+}
+.dark-theme-override .border-emerald-100 {
+  border-color: rgba(16, 185, 129, 0.2) !important;
+}
+.dark-theme-override .text-emerald-800 {
+  color: #A7F3D0 !important;
+}
+.dark-theme-override .text-emerald-700 {
+  color: #34D399 !important;
+}
+.dark-theme-override .bg-emerald-100 {
+  background-color: rgba(16, 185, 129, 0.15) !important;
+}
+.dark-theme-override .border-slate-50 {
+  border-color: #1E293B !important;
+}
+.dark-theme-override .text-slate-500 {
+  color: #94A3B8 !important;
+}
+.dark-theme-override .bg-slate-900\/20 {
+  background-color: rgba(15, 23, 42, 0.4) !important;
+}
+.dark-theme-override .border-slate-850 {
+  border-color: #1E293B !important;
+}
+.dark-theme-override .bg-slate-900\/30 {
+  background-color: rgba(15, 23, 42, 0.5) !important;
+}
+.dark-theme-override .border-slate-800\/60 {
+  border-color: rgba(30, 41, 59, 0.6) !important;
+}
+
+/* Light Theme Overrides for ResultDashboard when theme === 'light' */
+.light-theme-override {
+  background-color: #F8FAFC !important;
+  color: #1E293B !important;
+}
+.light-theme-override .bg-\[\#0F1524\] {
+  background-color: #FFFFFF !important;
+  color: #1E293B !important;
+}
+.light-theme-override .border-slate-800,
+.light-theme-override .border-slate-800\/80,
+.light-theme-override .border-slate-900,
+.light-theme-override .border-slate-850 {
+  border-color: #E2E8F0 !important;
+}
+.light-theme-override .text-white {
+  color: #0F172A !important;
+}
+.light-theme-override .text-slate-100 {
+  color: #0F172A !important;
+}
+.light-theme-override .text-slate-300 {
+  color: #334155 !important;
+}
+.light-theme-override .text-slate-400 {
+  color: #64748B !important;
+}
+.light-theme-override .bg-slate-900\/40,
+.light-theme-override .bg-slate-900\/30,
+.light-theme-override .bg-slate-900\/20,
+.light-theme-override .bg-slate-900 {
+  background-color: #F1F5F9 !important;
+  color: #334155 !important;
+}
+.light-theme-override .bg-slate-950,
+.light-theme-override .bg-slate-850\/30,
+.light-theme-override .bg-slate-850 {
+  background-color: #F8FAFC !important;
+}
+.light-theme-override .border-slate-800\/50 {
+  border-color: #E2E8F0 !important;
+}
+.light-theme-override .text-emerald-400 {
+  color: #059669 !important;
+}
+.light-theme-override .text-blue-400 {
+  color: #2563EB !important;
+}
+.light-theme-override .text-purple-400 {
+  color: #7C3AED !important;
+}
+.light-theme-override .text-amber-400 {
+  color: #D97706 !important;
+}
+.light-theme-override .bg-slate-950\/20 {
+  background-color: rgba(241, 245, 249, 0.5) !important;
+}
+.light-theme-override .text-emerald-500 {
+  color: #10B981 !important;
+}
+.light-theme-override .text-slate-500 {
+  color: #64748B !important;
+}
+.light-theme-override .text-slate-600 {
+  color: #475569 !important;
+}
+.light-theme-override .bg-gradient-to-br {
+  background-image: linear-gradient(to bottom right, #FFFFFF, #F1F5F9) !important;
+}

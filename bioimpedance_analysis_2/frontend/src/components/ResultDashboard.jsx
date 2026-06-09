@@ -2,7 +2,7 @@ import React from 'react';
 import { Sparkles, Trophy, Flame, Dumbbell, ShieldAlert, ArrowLeft, Download, Share2, RefreshCw, CheckCircle2, ChevronRight } from 'lucide-react';
 
 // Reusable SVG Donut Chart Component
-function DonutChart({ value, label, segments, size = 130, strokeWidth = 10 }) {
+function DonutChart({ value, label, segments, size = 130, strokeWidth = 10, isDark = true }) {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   let currentOffset = 0;
@@ -17,7 +17,7 @@ function DonutChart({ value, label, segments, size = 130, strokeWidth = 10 }) {
             cy={size / 2}
             r={radius}
             fill="transparent"
-            stroke="#1E293B"
+            stroke={isDark ? "#1E293B" : "#F1F5F9"}
             strokeWidth={strokeWidth}
           />
           {segments.map((segment, idx) => {
@@ -45,8 +45,8 @@ function DonutChart({ value, label, segments, size = 130, strokeWidth = 10 }) {
           })}
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-2">
-          <span className="text-lg font-extrabold text-white">{value}</span>
-          <span className="text-[9px] text-slate-400 font-semibold uppercase tracking-wider mt-0.5 leading-tight">{label}</span>
+          <span className={`text-lg font-extrabold ${isDark ? 'text-white' : 'text-slate-800'}`}>{value}</span>
+          <span className={`text-[9px] font-semibold uppercase tracking-wider mt-0.5 leading-tight ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{label}</span>
         </div>
       </div>
     </div>
@@ -54,7 +54,7 @@ function DonutChart({ value, label, segments, size = 130, strokeWidth = 10 }) {
 }
 
 // Custom Markdown Parser to render analysis text elegantly in Dark Mode
-function MarkdownRenderer({ text }) {
+function MarkdownRenderer({ text, isDark = true }) {
   if (!text) return null;
 
   const lines = text.split('\n');
@@ -84,20 +84,20 @@ function MarkdownRenderer({ text }) {
     } else {
       if (inTable) {
         elements.push(
-          <div key={`table-${idx}`} className="overflow-x-auto my-4 border border-slate-800 rounded-xl">
+          <div key={`table-${idx}`} className={`overflow-x-auto my-4 border rounded-xl ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
             <table className="w-full text-xs text-left border-collapse">
               <thead>
-                <tr className="border-b border-slate-800 bg-slate-900/50">
+                <tr className={`border-b ${isDark ? 'border-slate-800 bg-slate-900/50 text-slate-300' : 'border-slate-200 bg-slate-50 text-slate-700'}`}>
                   {tableHeaders.map((h, i) => (
-                    <th key={i} className="p-3 font-semibold text-slate-300">{h.replace(/\*\*/g, '')}</th>
+                    <th key={i} className="p-3 font-semibold">{h.replace(/\*\*/g, '')}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {tableRows.map((row, ri) => (
-                  <tr key={ri} className="border-b border-slate-800 hover:bg-slate-850/30 last:border-b-0">
+                  <tr key={ri} className={`border-b last:border-b-0 ${isDark ? 'border-slate-800 hover:bg-slate-850/30' : 'border-slate-200 hover:bg-slate-50'}`}>
                     {row.map((cell, ci) => (
-                      <td key={ci} className="p-3 text-slate-400">{cell.replace(/\*\*/g, '')}</td>
+                      <td key={ci} className={`p-3 ${isDark ? 'text-slate-400' : 'text-slate-650'}`}>{cell.replace(/\*\*/g, '')}</td>
                     ))}
                   </tr>
                 ))}
@@ -113,23 +113,23 @@ function MarkdownRenderer({ text }) {
 
     // Header parsing
     if (cleanLine.startsWith('### ')) {
-      elements.push(<h4 key={idx} className="text-xs font-bold text-slate-400 uppercase tracking-wider mt-5 mb-2 border-b border-slate-800/60 pb-1">{cleanLine.substring(4)}</h4>);
+      elements.push(<h4 key={idx} className={`text-xs font-bold uppercase tracking-wider mt-5 mb-2 border-b pb-1 ${isDark ? 'text-slate-400 border-slate-800/60' : 'text-slate-500 border-slate-200'}`}>{cleanLine.substring(4)}</h4>);
       return;
     }
     if (cleanLine.startsWith('## ')) {
-      elements.push(<h3 key={idx} className="text-sm font-extrabold text-emerald-400 mt-6 mb-3 flex items-center gap-2">{cleanLine.substring(3)}</h3>);
+      elements.push(<h3 key={idx} className={`text-sm font-extrabold mt-6 mb-3 flex items-center gap-2 ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>{cleanLine.substring(3)}</h3>);
       return;
     }
     if (cleanLine.startsWith('# ')) {
-      elements.push(<h2 key={idx} className="text-base font-bold text-white mt-8 mb-4">{cleanLine.substring(2)}</h2>);
+      elements.push(<h2 key={idx} className={`text-base font-bold mt-8 mb-4 ${isDark ? 'text-white' : 'text-slate-850'}`}>{cleanLine.substring(2)}</h2>);
       return;
     }
 
     // List item parsing
     if (cleanLine.startsWith('- ') || cleanLine.startsWith('* ')) {
       elements.push(
-        <li key={idx} className="text-xs text-slate-300 ml-4 list-disc mb-1.5 leading-relaxed">
-          {parseInlineMarkdown(cleanLine.substring(2))}
+        <li key={idx} className={`text-xs ml-4 list-disc mb-1.5 leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-650'}`}>
+          {parseInlineMarkdown(cleanLine.substring(2), isDark)}
         </li>
       );
       return;
@@ -138,8 +138,8 @@ function MarkdownRenderer({ text }) {
     // Paragraph parsing
     if (cleanLine) {
       elements.push(
-        <p key={idx} className="text-xs text-slate-300 leading-relaxed mb-3">
-          {parseInlineMarkdown(cleanLine)}
+        <p key={idx} className={`text-xs leading-relaxed mb-3 ${isDark ? 'text-slate-300' : 'text-slate-650'}`}>
+          {parseInlineMarkdown(cleanLine, isDark)}
         </p>
       );
     }
@@ -148,13 +148,14 @@ function MarkdownRenderer({ text }) {
   return <div className="space-y-1">{elements}</div>;
 }
 
-function parseInlineMarkdown(text) {
+function parseInlineMarkdown(text, isDark) {
   const parts = text.split(/\*\*/g);
-  return parts.map((part, i) => i % 2 === 1 ? <strong key={i} className="font-semibold text-white">{part}</strong> : part);
+  return parts.map((part, i) => i % 2 === 1 ? <strong key={i} className={`font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>{part}</strong> : part);
 }
 
-export default function ResultDashboard({ analysisData, formData, onBack, onDownloadPDF, isDownloadingPDF }) {
+export default function ResultDashboard({ analysisData, formData, onBack, onDownloadPDF, isDownloadingPDF, theme = 'dark' }) {
   const { parsed_metrics, stage1_result, stage2_result, formatted_report } = analysisData;
+  const isDark = theme === 'dark';
 
   const [shareText, setShareText] = React.useState('Compartilhar');
 
@@ -275,7 +276,7 @@ export default function ResultDashboard({ analysisData, formData, onBack, onDown
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 text-slate-100 bg-[#090D16]">
+    <div className={`max-w-7xl mx-auto px-4 py-8 transition-colors duration-500 ${isDark ? 'text-slate-100 bg-[#090D16]' : 'light-theme-override bg-slate-50 text-slate-800'}`}>
       
       {/* Stepper Header (Dark Mode styled) */}
       <div className="bg-[#0F1524] rounded-2xl border border-slate-800 p-6 mb-8 shadow-md">
@@ -382,6 +383,7 @@ export default function ResultDashboard({ analysisData, formData, onBack, onDown
                 value={`${pctGordura.toFixed(1)}%`} 
                 label="Gordura corporal" 
                 segments={compSegments} 
+                isDark={isDark}
               />
 
               <div className="space-y-2 mt-4 text-[10px]">
@@ -420,6 +422,7 @@ export default function ResultDashboard({ analysisData, formData, onBack, onDown
                 value={caloriesVal.toLocaleString('pt-BR')} 
                 label="Gasto estimado" 
                 segments={calSegments} 
+                isDark={isDark}
               />
 
               <div className="space-y-2 mt-4 text-[10px]">
@@ -458,6 +461,7 @@ export default function ResultDashboard({ analysisData, formData, onBack, onDown
                 value={`${caloriesVal.toLocaleString('pt-BR')} kcal`} 
                 label="Target diário" 
                 segments={macroSegments} 
+                isDark={isDark}
               />
 
               <div className="space-y-2 mt-4 text-[10px]">
@@ -532,13 +536,13 @@ export default function ResultDashboard({ analysisData, formData, onBack, onDown
               <h4 className="font-bold text-white text-xs">Parecer de Composição Física (IA Stage 1)</h4>
               <span className="text-[9px] bg-slate-900 px-2 py-0.5 rounded-sm border border-slate-800 text-slate-500 font-bold">Diagnóstico</span>
             </div>
-            <MarkdownRenderer text={stage1_result} />
+            <MarkdownRenderer text={stage1_result} isDark={isDark} />
 
             <div className="border-b border-slate-800 pb-2 pt-4 flex items-center justify-between">
               <h4 className="font-bold text-white text-xs">Diretrizes Dietéticas e Plano Alimentar (IA Stage 2)</h4>
               <span className="text-[9px] bg-slate-900 px-2 py-0.5 rounded-sm border border-slate-800 text-slate-500 font-bold">Nutrição</span>
             </div>
-            <MarkdownRenderer text={stage2_result} />
+            <MarkdownRenderer text={stage2_result} isDark={isDark} />
           </div>
 
         </div>

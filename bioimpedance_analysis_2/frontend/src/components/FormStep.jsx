@@ -1,7 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { User, Activity, Flame, ShieldAlert, Heart, FileText, CheckCircle2, Lock, Info, Sparkles } from 'lucide-react';
 
-export default function FormStep({ formData, setFormData, onSubmit, isAnalyzing, modelChoice, setModelChoice, tempChoice, setTempChoice }) {
+export default function FormStep({
+  formData,
+  setFormData,
+  onSubmit,
+  isAnalyzing,
+  modelChoice,
+  setModelChoice,
+  tempChoice,
+  setTempChoice,
+  inputMethod = 'manual',
+  setInputMethod = () => {},
+  rawReport = '',
+  setRawReport = () => {},
+  theme = 'light'
+}) {
   const [characterCount, setCharacterCount] = useState(0);
 
   // Calculate IMC dynamically
@@ -65,7 +79,7 @@ export default function FormStep({ formData, setFormData, onSubmit, isAnalyzing,
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className={`max-w-7xl mx-auto px-4 py-8 transition-colors duration-500 ${theme === 'dark' ? 'dark-theme-override bg-[#090D16] text-white' : 'bg-slate-50 text-slate-800'}`}>
       {/* Stepper Header */}
       <div className="bg-white rounded-2xl border border-slate-100 p-6 mb-8 shadow-xs">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 relative">
@@ -100,14 +114,42 @@ export default function FormStep({ formData, setFormData, onSubmit, isAnalyzing,
         </div>
       </div>
 
+      {/* Input Method Selector Tab Group */}
+      <div className="p-1 rounded-xl max-w-md mx-auto mb-8 flex bg-slate-200/50 border border-slate-200/50">
+        <button
+          type="button"
+          onClick={() => setInputMethod('manual')}
+          className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
+            inputMethod === 'manual'
+              ? 'bg-emerald-600 text-white shadow-xs'
+              : 'text-slate-500 hover:text-slate-800'
+          }`}
+        >
+          ✍️ Preenchimento Manual
+        </button>
+        <button
+          type="button"
+          onClick={() => setInputMethod('upload')}
+          className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
+            inputMethod === 'upload'
+              ? 'bg-emerald-600 text-white shadow-xs'
+              : 'text-slate-500 hover:text-slate-800'
+          }`}
+        >
+          📂 Importar Relatório (.txt)
+        </button>
+      </div>
+
       {/* Main Layout Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         {/* Left Form Column (Span 2) */}
         <div className="lg:col-span-2 space-y-6">
           
-          {/* Section 1: Dados Pessoais */}
-          <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-xs space-y-4">
+          {inputMethod === 'manual' ? (
+            <>
+              {/* Section 1: Dados Pessoais */}
+              <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-xs space-y-4">
             <div className="flex items-center gap-3 pb-3 border-b border-slate-50">
               <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
                 <User size={20} />
@@ -518,6 +560,96 @@ export default function FormStep({ formData, setFormData, onSubmit, isAnalyzing,
               <span className="absolute bottom-3 right-3 text-[10px] text-slate-400 font-medium">{characterCount}/500 caracteres</span>
             </div>
           </div>
+            </>
+          ) : (
+            /* Upload Interface */
+            <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-xs space-y-6">
+              <div className="flex items-center gap-3 pb-3 border-b border-slate-50">
+                <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+                  <FileText size={20} />
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-800">Importação de Avaliação Física (.txt)</h3>
+                  <p className="text-slate-400 text-xs">Insira a identificação do paciente e carregue o relatório de texto.</p>
+                </div>
+              </div>
+
+              {/* Patient Info Inputs inside Upload View */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">Nome completo do paciente</label>
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-hidden focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                    value={formData.patient_name}
+                    onChange={(e) => setFormData(prev => ({ ...prev, patient_name: e.target.value }))}
+                    placeholder="Ex: Juliana Lima"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">Gênero</label>
+                  <select
+                    className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-hidden focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 bg-white"
+                    value={formData.personal_data.sexo}
+                    onChange={(e) => handlePersonalChange("sexo", e.target.value)}
+                  >
+                    <option value="Feminino">Feminino</option>
+                    <option value="Masculino">Masculino</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* File Dropzone */}
+              <div className="border-2 border-dashed border-slate-200 rounded-xl p-8 text-center transition-all bg-slate-50/50 hover:bg-slate-50 hover:border-emerald-500">
+                <input
+                  type="file"
+                  accept=".txt"
+                  id="txt-upload"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onload = (event) => {
+                        setRawReport(event.target.result);
+                      };
+                      reader.readAsText(file);
+                    }
+                  }}
+                />
+                <label htmlFor="txt-upload" className="cursor-pointer space-y-3 block">
+                  <div className="mx-auto w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100">
+                    <FileText size={20} />
+                  </div>
+                  <div className="text-xs">
+                    <span className="text-emerald-600 font-bold hover:underline">Clique para fazer upload</span>
+                    <span className="text-slate-400"> ou arraste o arquivo aqui</span>
+                  </div>
+                  <p className="text-[10px] text-slate-400">Apenas arquivos .txt (ex: bioimpedance.txt)</p>
+                </label>
+              </div>
+
+              {/* Text Area for extracted text */}
+              {rawReport && (
+                <div className="space-y-2">
+                  <label className="block text-xs font-semibold text-slate-600">
+                    Texto do Relatório extraído (pode editar se necessário):
+                  </label>
+                  <textarea
+                    className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg min-h-[250px] focus:outline-hidden focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                    value={rawReport}
+                    onChange={(e) => setRawReport(e.target.value)}
+                  />
+                </div>
+              )}
+
+              {!rawReport && (
+                <div className="p-4 rounded-xl border border-slate-100 bg-slate-50 text-slate-500 text-xs leading-relaxed">
+                  💡 <strong>Dica:</strong> Para testar rapidamente, faça o upload de um arquivo contendo a avaliação física em formato de texto. O modelo Nemotron/Gemini processará a linguagem natural do arquivo para extrair as métricas!
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Bottom Call-to-Action Bar */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-100">
@@ -528,9 +660,9 @@ export default function FormStep({ formData, setFormData, onSubmit, isAnalyzing,
             
             <button
               onClick={onSubmit}
-              disabled={isAnalyzing || !formData.patient_name}
+              disabled={isAnalyzing || !formData.patient_name || (inputMethod === 'upload' && !rawReport)}
               className={`flex items-center justify-center gap-2 px-8 py-3 text-sm font-bold text-white rounded-xl shadow-md transition-all duration-300 w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 ${
-                (isAnalyzing || !formData.patient_name) ? "opacity-50 cursor-not-allowed" : ""
+                (isAnalyzing || !formData.patient_name || (inputMethod === 'upload' && !rawReport)) ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
               {isAnalyzing ? (

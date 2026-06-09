@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import FormStep from './components/FormStep';
 import ResultDashboard from './components/ResultDashboard';
-import { Heart } from 'lucide-react';
+import { Heart, Sun, Moon } from 'lucide-react';
 
 export default function App() {
   const [activeStep, setActiveStep] = useState('FORM'); // 'FORM' or 'RESULTS'
@@ -10,6 +10,10 @@ export default function App() {
   const [modelChoice, setModelChoice] = useState('gemini-2.5-flash');
   const [tempChoice, setTempChoice] = useState(0.0);
   const [analysisData, setAnalysisData] = useState(null);
+
+  const [inputMethod, setInputMethod] = useState('manual'); // 'manual' or 'upload'
+  const [rawReport, setRawReport] = useState('');
+  const [theme, setTheme] = useState('light');
 
   // Initial Form State matching design examples
   const [formData, setFormData] = useState({
@@ -80,9 +84,10 @@ export default function App() {
         body: JSON.stringify({
           patient_name: formData.patient_name,
           personal_data: formData.personal_data,
-          antro_data: formData.antro_data,
-          dobras_data: formData.dobras_data,
-          perimetros_data: formData.perimetros_data,
+          antro_data: inputMethod === 'manual' ? formData.antro_data : null,
+          dobras_data: inputMethod === 'manual' ? formData.dobras_data : null,
+          perimetros_data: inputMethod === 'manual' ? formData.perimetros_data : null,
+          raw_report: inputMethod === 'upload' ? rawReport : null,
           model_choice: modelChoice,
           temp_choice: tempChoice
         }),
@@ -95,6 +100,7 @@ export default function App() {
       const data = await response.json();
       setAnalysisData(data);
       setActiveStep('RESULTS');
+      setTheme('dark');
     } catch (error) {
       alert(`Erro: ${error.message}. Certifique-se de que o servidor FastAPI está rodando.`);
     } finally {
@@ -140,13 +146,16 @@ export default function App() {
     }
   };
 
-  const isDarkTheme = activeStep === 'RESULTS';
+  const isDark = theme === 'dark';
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  };
 
   return (
-    <div className={`min-h-screen transition-colors duration-500 ${isDarkTheme ? 'bg-[#090D16] text-slate-100' : 'bg-slate-50 text-slate-800'}`}>
+    <div className={`min-h-screen transition-colors duration-500 ${isDark ? 'bg-[#090D16] text-slate-100' : 'bg-slate-50 text-slate-800'}`}>
       
       {/* Universal Header Navigation */}
-      <header className={`border-b ${isDarkTheme ? 'bg-[#0F1524]/90 border-slate-800' : 'bg-white border-slate-100'} sticky top-0 z-50 backdrop-blur-md`}>
+      <header className={`border-b ${isDark ? 'bg-[#0F1524]/90 border-slate-800' : 'bg-white border-slate-100'} sticky top-0 z-50 backdrop-blur-md`}>
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           
           {/* Logo */}
@@ -154,15 +163,26 @@ export default function App() {
             <div className="flex items-center justify-center w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">
               <Heart size={16} fill="currentColor" />
             </div>
-            <span className={`font-black tracking-tight text-base ${isDarkTheme ? 'text-white' : 'text-slate-800'}`}>
+            <span className={`font-black tracking-tight text-base ${isDark ? 'text-white' : 'text-slate-800'}`}>
               Caldas <span className="text-emerald-500">Nutri</span>
             </span>
           </div>
 
-          {/* Simple App Indicator */}
-          <div className="flex items-center gap-2">
+          {/* Theme Switch & Page Indicator */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={toggleTheme}
+              className={`p-2 rounded-lg border transition-all ${
+                isDark
+                  ? 'border-slate-800 text-amber-400 hover:bg-slate-800'
+                  : 'border-slate-200 text-slate-500 hover:bg-slate-100'
+              }`}
+              title={isDark ? "Mudar para Modo Claro" : "Mudar para Modo Escuro"}
+            >
+              {isDark ? <Sun size={16} /> : <Moon size={16} />}
+            </button>
             <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md ${
-              isDarkTheme ? 'bg-slate-800 text-slate-300 border border-slate-700' : 'bg-slate-100 text-slate-600 border border-slate-200'
+              isDark ? 'bg-slate-800 text-slate-300 border border-slate-700' : 'bg-slate-100 text-slate-600 border border-slate-200'
             }`}>
               {activeStep === 'FORM' ? 'Ficha de Avaliação' : 'Relatório IA'}
             </span>
@@ -176,12 +196,12 @@ export default function App() {
         {activeStep === 'FORM' ? (
           <div className="animate-fade-in">
             <div className="max-w-7xl mx-auto px-4 pt-8 text-center md:text-left">
-              <h1 className="text-2xl font-black tracking-tight text-slate-800 flex items-center justify-center md:justify-start gap-2">
+              <h1 className={`text-2xl font-black tracking-tight flex items-center justify-center md:justify-start gap-2 ${isDark ? 'text-white' : 'text-slate-800'}`}>
                 Nova Análise Nutricional
                 <span className="p-1 bg-emerald-50 text-emerald-600 rounded-md text-xs font-bold border border-emerald-100">IA</span>
               </h1>
-              <p className="text-slate-400 text-xs mt-1">
-                Preencha os dados abaixo para receber uma análise completa gerada por IA com recomendações personalizadas.
+              <p className={`${isDark ? 'text-slate-400' : 'text-slate-500'} text-xs mt-1`}>
+                Preencha os dados abaixo ou faça upload de um relatório para receber uma análise completa gerada por IA com recomendações personalizadas.
               </p>
             </div>
             <FormStep
@@ -193,23 +213,32 @@ export default function App() {
               setModelChoice={setModelChoice}
               tempChoice={tempChoice}
               setTempChoice={setTempChoice}
+              inputMethod={inputMethod}
+              setInputMethod={setInputMethod}
+              rawReport={rawReport}
+              setRawReport={setRawReport}
+              theme={theme}
             />
           </div>
         ) : (
-          <div className="animate-fade-in bg-[#090D16]">
+          <div className="animate-fade-in">
             <ResultDashboard
               analysisData={analysisData}
               formData={formData}
-              onBack={() => setActiveStep('FORM')}
+              onBack={() => {
+                setActiveStep('FORM');
+                setTheme('light');
+              }}
               onDownloadPDF={handleDownloadPDF}
               isDownloadingPDF={isDownloadingPDF}
+              theme={theme}
             />
           </div>
         )}
       </main>
 
       {/* Footer */}
-      <footer className={`py-6 border-t text-center text-[10px] font-semibold ${isDarkTheme ? 'bg-[#090D16] border-slate-900 text-slate-600' : 'bg-slate-50 border-slate-100 text-slate-400'}`}>
+      <footer className={`py-6 border-t text-center text-[10px] font-semibold ${isDark ? 'bg-[#090D16] border-slate-900 text-slate-600' : 'bg-slate-50 border-slate-100 text-slate-400'}`}>
         <p>&copy; {new Date().getFullYear()} Caldas Nutri. Todos os direitos reservados. Inteligência Artificial para Avaliação Antropométrica.</p>
       </footer>
 
